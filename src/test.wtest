@@ -1,0 +1,120 @@
+import trenes.*
+import vagones.*
+import deposito.*
+
+describe "formaciones" {
+	const locomotora1 = new Locomotora(1000, 12000, 200)
+	const locomotora2 = new Locomotora(1000, 12000, 100)
+	const locomotora3 = new Locomotora(2000, 12000, 200)
+	const locomotora4 = new Locomotora(1000, 500, 150)
+	const locomotora5 = new Locomotora(1000, 10000, 400)
+	
+	const vagonPasajero1 = new VagonDePasajeros(10, 1)
+	const vagonPasajero2 = new VagonDePasajeros(10, 2)
+	const vagonPasajero3 = new VagonDePasajeros(10, 4)
+	
+	const vagonDeCarga1 = new VagonDeCarga(500)
+	const vagonDeCarga2 = new VagonDeCarga(600)
+	const vagonDeCarga3 = new VagonDeCarga(900)
+	
+	const formacion0 = new Formacion([locomotora4],[vagonPasajero1])
+	const formacion1 = new Formacion([locomotora1, locomotora2],
+		[vagonPasajero1, vagonPasajero2, vagonDeCarga1, vagonDeCarga2])
+	const formacion2 = new Formacion([locomotora1, locomotora2],
+		[vagonPasajero1, vagonPasajero2,vagonPasajero3,
+		vagonDeCarga1, vagonDeCarga2, vagonDeCarga3])
+	const formacion3 = new Formacion([locomotora1, locomotora2],
+		[vagonPasajero2, vagonDeCarga2, vagonDeCarga3])
+	const formacion4 = new Formacion([locomotora1, locomotora2, locomotora3, locomotora4],
+		[vagonPasajero1, vagonPasajero2, vagonPasajero3, vagonDeCarga1, vagonDeCarga2,
+		vagonDeCarga3])
+	const formacionCorta1 = new FormacionCortaDistancia([locomotora2], [vagonDeCarga2])
+	const formacionCorta2 = new FormacionCortaDistancia([locomotora4],
+							[vagonPasajero3, vagonDeCarga3])						
+	const formacionLarga1 = new FormacionLargaDistancia([locomotora1],
+							[vagonPasajero2, vagonDeCarga2],true)
+	const formacionLarga2 = new FormacionLargaDistancia([locomotora4],[vagonDeCarga1],false)
+	
+	const forAltaVelocidad1 = new FormacionAltaVelocidad([locomotora3], [vagonPasajero1, 
+								vagonDeCarga1, vagonDeCarga2], true)
+	const forAltaVelocidad2 = new FormacionAltaVelocidad([locomotora5], [vagonDeCarga1, 
+								vagonDeCarga2, vagonDeCarga3], true)
+	
+	const deposito1 = new Deposito([formacion2, formacion3], [locomotora3, locomotora4])
+	const deposito2 = new Deposito([formacion2,formacion3,formacion4],
+						[locomotora3, locomotora4])
+	const deposito3 = new Deposito([formacion0],[locomotora1])
+	
+	test "cantidad de vagones livianos"{	
+		assert.equals(2,formacion1.cantidadVagonesLivianos())
+	}
+	test "velocidad maxima de una formacion"{
+		assert.equals(100, formacion1.velocidadMaximaDeFormacion())
+	}
+	test "formacion eficiente"{
+		assert.that(formacion1.esEficiente())
+	}
+	test "formacion no es eficiente"{
+		assert.notThat(formacion0.esEficiente())
+	}
+	test "puede moverse"{
+		assert.that(formacion1.puedeMoverse())
+	}
+	test "kilos faltante de empuje"{
+		assert.equals(0, formacion1.kilosDeEmpujeFaltante())
+	}
+	test "conjunto de vagones pesados"{
+		assert.equals(#{vagonPasajero3, vagonPasajero2}, deposito1.vagonesPesados())
+	}
+	test "deposito necesita conductor experimentado"{
+		assert.that(deposito2.necesitaConductor())
+	}
+	test "desposito no necesita conductor experimentado"{
+		assert.notThat(deposito3.necesitaConductor())
+	}
+	test "agregar locomotora a una formacion del deposito"{
+		deposito1.agregarLocomotoraSuelta(formacion2)
+		assert.equals([locomotora1,locomotora2, locomotora3], formacion2.locomotoras())
+		assert.equals([locomotora4], deposito1.locomotorasSueltas())
+	}
+	test "formacion de corta distancia esta bien formada"{
+		assert.that(formacionCorta1.bienArmada())
+	}
+	test "formacion de corta distancia no esta bien formada"{
+		assert.notThat(formacionCorta2.bienArmada())
+	}
+	test "formacion de larga distancia esta bien formada"{
+		assert.that(formacionLarga1.bienArmada())
+	}
+	test "formacion de larga distancia no esta bien formada"{
+		assert.notThat(formacionLarga2.bienArmada())
+	}
+	test "limite de velocidad corta distancia"{
+		assert.equals(60, formacionCorta1.velocidadMaxima())
+	}
+	test "limite de velocidad larga distancia ciudades grandes"{
+		assert.equals(200, formacionLarga1.velocidadMaxima())
+	}
+	test "limite de velocidad larga distancia ciudades chicas"{
+		assert.equals(150, formacionLarga2.velocidadMaxima())
+	}
+	test "velocidad de formacion alta velocidad no es mayor a 250"{
+		assert.notThat(forAltaVelocidad1.velocidadMaxima())
+	}	
+	test "todos los vagones de formacion de alta velocidad no son livianos"{
+		assert.notThat(forAltaVelocidad1.todosVagonesLivianos())
+	}
+	test "tren de alta velocidad no esta bien armado"{
+		assert.notThat(forAltaVelocidad1.bienArmada())
+	}
+	test "velocidad de formacion alta velocidad es mayor a 250"{
+		assert.that(forAltaVelocidad2.velocidadMaxima())
+	}
+	test "todos los vagones de formacion de alta velocidad son livianos"{
+		assert.that(forAltaVelocidad2.todosVagonesLivianos())
+	}
+	test "tren de alta velocidad esta bien armado"{
+		assert.that(forAltaVelocidad2.bienArmada())
+	}	
+}
+
