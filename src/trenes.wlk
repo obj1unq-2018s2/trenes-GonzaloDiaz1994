@@ -74,7 +74,7 @@ class FormacionCortaDistancia inherits Formacion{
 	override method bienArmada(){
 	 	return super() and not self.esCompleja()
 	 }
-	 method velocidadMaxima() = 60.min(self.velocidadMaximaDeFormacion())
+	override method velocidadMaximaDeFormacion() = super().min(60)
 }
 
 class FormacionLargaDistancia inherits Formacion{
@@ -86,19 +86,22 @@ class FormacionLargaDistancia inherits Formacion{
 	override method bienArmada(){
 		return super() and self.tieneMuchosBanios()
 	}
-	method velocidadMaxima(){
+	override method velocidadMaximaDeFormacion(){
 		if(ciudadGrande){
-			return 200.min(self.velocidadMaximaDeFormacion())
-		}else{ return 150.min(self.velocidadMaximaDeFormacion())}
+			return super().min(200)
+		}else{ return super().min(150)}
 	}
 }
 
 class FormacionAltaVelocidad inherits FormacionLargaDistancia{
-		
-	override method velocidadMaxima() = self.velocidadMaximaDeFormacion() >= 250
+	const velocidadMinima = 250
+	override method velocidadMaximaDeFormacion() = return locomotoras.min{
+		locomotora => locomotora.velocidadMaxima()}.velocidadMaxima()
+	
+	method cumpleVelocidadMinima() = self.velocidadMaximaDeFormacion() >= velocidadMinima
 	
 	override method bienArmada(){
-		return super() and self.todosVagonesLivianos() and self.velocidadMaxima()
+		return super() and self.todosVagonesLivianos() and self.cumpleVelocidadMinima()
 	}
 }
 

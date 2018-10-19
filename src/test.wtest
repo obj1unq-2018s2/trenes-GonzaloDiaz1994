@@ -90,16 +90,16 @@ describe "formaciones" {
 		assert.notThat(formacionLarga2.bienArmada())
 	}
 	test "limite de velocidad corta distancia"{
-		assert.equals(60, formacionCorta1.velocidadMaxima())
+		assert.equals(60, formacionCorta1.velocidadMaximaDeFormacion())
 	}
 	test "limite de velocidad larga distancia ciudades grandes"{
-		assert.equals(200, formacionLarga1.velocidadMaxima())
+		assert.equals(200, formacionLarga1.velocidadMaximaDeFormacion())
 	}
 	test "limite de velocidad larga distancia ciudades chicas"{
-		assert.equals(150, formacionLarga2.velocidadMaxima())
+		assert.equals(150, formacionLarga2.velocidadMaximaDeFormacion())
 	}
 	test "velocidad de formacion alta velocidad no es mayor a 250"{
-		assert.notThat(forAltaVelocidad1.velocidadMaxima())
+		assert.notThat(forAltaVelocidad1.cumpleVelocidadMinima())
 	}	
 	test "todos los vagones de formacion de alta velocidad no son livianos"{
 		assert.notThat(forAltaVelocidad1.todosVagonesLivianos())
@@ -108,7 +108,7 @@ describe "formaciones" {
 		assert.notThat(forAltaVelocidad1.bienArmada())
 	}
 	test "velocidad de formacion alta velocidad es mayor a 250"{
-		assert.that(forAltaVelocidad2.velocidadMaxima())
+		assert.that(forAltaVelocidad2.cumpleVelocidadMinima())
 	}
 	test "todos los vagones de formacion de alta velocidad son livianos"{
 		assert.that(forAltaVelocidad2.todosVagonesLivianos())
